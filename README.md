@@ -210,9 +210,9 @@ Feel free to modify the experimental settings in `configs/nerf_lego.yaml` --- th
 
 Add view dependence to your NeRF model! Specifically, make it so that emission can vary with viewing direction. You can NeRF or other papers for how to do this effectively --- if you're not careful, your network may overfit to the training images. Discuss the trade-offs between increased view dependence and generalization quality.
 
-###  4.2 Coarse/Fine Sampling (10 pts)
+###  4.2 Hierarchical Sampling (10 pts)
 
-NeRF employs two networks: a coarse network and a fine network. During the coarse pass, it uses the coarse network to get an estimate of geometry geometry, and during fine pass uses these geometry estimates for better point sampling for the fine network. Implement this strategy and discuss trade-offs (speed / quality).
+NeRF employs two networks: a coarse network and a fine network. During the coarse pass, it uses the coarse network to get an estimate of geometry geometry, and during fine pass uses these geometry estimates for better point sampling for the fine network. Implement this hierarchical point-sampling strategy and discuss trade-offs (speed / quality).
 
 ###  4.3 High Resolution Imagery (10 pts)
 
