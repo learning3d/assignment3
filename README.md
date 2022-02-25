@@ -175,7 +175,7 @@ The code renders a spiral sequence of the optimized volume in `images/part_2.gif
 
 
 ##  3. Optimizing a Neural Radiance Field (NeRF) (30 points)
-In this part, you will implement an implicit volume as a Multi-Layer Perceptron (MLP) in the `NeuraRadianceField` class in `implicit.py`. This MLP should map 3D position to volume density and color. Specifically:
+In this part, you will implement an implicit volume as a Multi-Layer Perceptron (MLP) in the `NeuraRadianceField` class in `implicit.py`. This MLP should map 3D position to volume density and color (`feature`). Specifically:
 
 1. Your MLP should take in a `RayBundle` object in its forward method, and produce color and density for each sample point in the RayBundle.
 2. You should also fill out the loss in `train_nerf` in the `main.py` file.
