@@ -129,13 +129,13 @@ def get_rays_from_pixels(xy_grid, image_size, camera):
         dim=-1
     )
 
-    # TODO (1.3): Use camera.unproject to get world space points from NDC space points
+    # TODO (1.3): Use camera.unproject to get world space points on the image plane from NDC space points
     pass
 
     # TODO (1.3): Get ray origins from camera center
     pass
 
-    # TODO (1.3): Get ray directions as image_plane_points - rays_o
+    # TODO (1.3): Get ray directions as world space points - rays_o
     pass
 
     # Create and return RayBundle
