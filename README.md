@@ -121,11 +121,11 @@ feature = implicit_output['feature']
 
 You'll then use the following equation to render color along a ray:
 
-![Spiral Rendering of Part 1](ta_images/color.PNG)
+![Spiral Rendering of Part 1](ta_images/color.png)
 
 where `σ` is density, `Δt` is the length of current ray segment, and `L_e` is color:
 
-![Spiral Rendering of Part 1](ta_images/transmittance.PNG)
+![Spiral Rendering of Part 1](ta_images/transmittance.png)
 
 Compute the weights `T * (1 - exp(-σ * Δt))` in `VolumeRenderer._compute_weights`, and perform the summation in `VolumeRenderer._aggregate`. Note that for the first segment `T = 1`.
 
