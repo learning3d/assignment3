@@ -40,7 +40,7 @@ There are four major components of our differentiable volume rendering pipeline:
 
 The scene, sampler, and renderer are all packaged together under the `Model` class in `main.py`. In particular the `Model`'s forward method invokes a `VolumeRenderer` instance with a sampling strategy and volume as input.
 
-Also, take a look at the `RayBundle` class in `ray_utils.py`, which provides a convenient wrapper around several inputs to the volume rendering procedure per ray.
+Also, take a look at the `RayBundle` class in `ray_utils.py`, which provides a convenient wrapper around several per-ray inputs to the volume rendering procedure.
 
 ##  1.2. Outline of tasks
 
