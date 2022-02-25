@@ -204,7 +204,7 @@ Feel free to modify the experimental settings in `configs/nerf_lego.yaml` --- th
 
 ![Spiral Rendering of Part 3](ta_images/part_3.gif)
 
-##  4. NeRF Extras (CHOOSE ONE! More than one is extra credit)
+##  4. NeRF Extras (***Choose at least one!*** More than one is extra credit)
 
 ###  4.1 View Dependence (10 pts)
 
