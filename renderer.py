@@ -25,7 +25,7 @@ class VolumeRenderer(torch.nn.Module):
         # TODO (1.5): Compute transmittance using the equation described in the README
         pass
 
-        # TODO (1.5): Compute weight used for rendering from transmittance and alpha
+        # TODO (1.5): Compute weight used for rendering from transmittance and density
         return weights
     
     def _aggregate(
