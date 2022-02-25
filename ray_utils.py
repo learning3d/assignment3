@@ -135,7 +135,7 @@ def get_rays_from_pixels(xy_grid, image_size, camera):
     # TODO (1.3): Get ray origins from camera center
     pass
 
-    # TODO (1.3): Get ray directions as world space points - rays_o
+    # TODO (1.3): Get normalized ray directions
     pass
 
     # Create and return RayBundle
