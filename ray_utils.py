@@ -46,7 +46,7 @@ class RayBundle(object):
             self.origins.reshape(*args, 3),
             self.directions.reshape(*args, 3),
             self.sample_points.reshape(*args, self.sample_points.shape[-2], 3),
-            self.sample_lengths.reshape(*args, self.sample_lengths.shape[-2], 3),
+            self.sample_lengths.reshape(*args, self.sample_lengths.shape[-2], 1),
         )
 
     def view(self, *args):
@@ -54,7 +54,7 @@ class RayBundle(object):
             self.origins.view(*args, 3),
             self.directions.view(*args, 3),
             self.sample_points.view(*args, self.sample_points.shape[-2], 3),
-            self.sample_lengths.view(*args, self.sample_lengths.shape[-2], 3),
+            self.sample_lengths.view(*args, self.sample_lengths.shape[-2], 1),
         )
 
     def _replace(self, **kwargs):
