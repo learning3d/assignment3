@@ -90,7 +90,7 @@ def render_points(filename, points, image_size=256, color=[0.7, 0.7, 1], device=
         points=points, features=rgb
     )
 
-    R, T = look_at_view_transform(10.0, 10.0, 90)
+    R, T = look_at_view_transform(10.0, 10.0, 96)
 
 
     # Prepare the camera:

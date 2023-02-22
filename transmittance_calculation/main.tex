@@ -1,0 +1,103 @@
+\documentclass[11pt,addpoints,answers]{exam}
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
+\usepackage[svgname]{xcolor}
+\usepackage{url}
+\usepackage{datetime}
+\usepackage{color}
+\usepackage[many]{tcolorbox}
+\usepackage{hyperref}
+
+\newcommand{\courseNum}{\href{https://learning3d.github.io/index.html}{16825}}
+\newcommand{\courseName}{\href{https://learning3d.github.io/index.html}{Learning for 3D Vision}}
+\newcommand{\courseSem}{\href{https://learning3d.github.io/index.html}{Fall 2023}}
+\newcommand{\courseUrl}{\url{https://piazza.com/cmu/fall2023/16825}}
+\newcommand{\hwNum}{Problem Set 3}
+\newcommand{\hwTopic}{Volume Rendering}
+\newcommand{\hwName}{\hwNum: \hwTopic}
+\newcommand{\outDate}{Feb. 22, 2023}
+\newcommand{\dueDate}{Mar. 15, 2023 11:59 PM}
+\newcommand{\instructorName}{Shubham Tulsiani}
+\newcommand{\taNames}{Shibo Zhao, Himangi Mittal, Yehonathan Litman, Yufei Wang, Nupur Kumari}
+
+\lhead{\hwName}
+\rhead{\courseNum}
+\cfoot{\thepage{} of \numpages{}}
+
+\title{\textsc{\hwName}} % Title
+
+
+\author{}
+
+\date{}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Document configuration %
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Don't display a date in the title and remove the white space
+\predate{}
+\postdate{}
+\date{}
+
+%%%%%%%%%%%%%%%%%%
+% Begin Document %
+%%%%%%%%%%%%%%%%%%
+
+
+\begin{document}
+
+\section*{}
+\begin{center}
+  \textsc{\LARGE \hwNum} \\
+  \vspace{1em}
+  \textsc{\large \courseNum{} \courseName{} (\courseSem)} \\
+  \courseUrl\\
+  \vspace{1em}
+  OUT: \outDate \\
+  DUE: \dueDate \\
+  Instructor: \instructorName \\
+  TAs: \taNames
+\end{center}
+
+
+% Default to visible (but empty) solution box.
+\newtcolorbox[]{studentsolution}[1][]{%
+    breakable,
+    enhanced,
+    colback=white,
+    title=Solution,
+    #1
+}
+
+\begin{questions}
+\question \textbf{[10 pts]}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth]{figure1.png}
+    \caption{A ray through a non-homogeneous medium. The medium is composed of 3 segments ($y1y2$, $y2y3$, $y3y4$). Each segment has a different absorption coefficient, shown as $\sigma_1, \sigma_2, \sigma_3$ in the figure. The length of each segment is also annotated in the figure (1m means 1 meter).}
+    \label{fig:q1}
+\end{figure}
+
+As shown in Figure~\ref{fig:q1}, we observe a ray going through a non-homogeneous medium. 
+Please compute the following transmittance:
+\begin{itemize}
+    \item $T(y1, y2)$
+    \item  $T(y2, y4)$
+    \item $T(x, y4)$
+    \item $T(x, y3)$
+\end{itemize} 
+
+
+
+\begin{tcolorbox}[fit,height=20cm, width=\textwidth, blank, borderline={0.5pt}{-2pt},halign=left, valign=center, nobeforeafter]
+
+
+% \begin{studentsolution}
+% Write your solution here.
+% \end{studentsolution}
+
+\end{tcolorbox}
+\end{questions}
+\end{document}
