@@ -35,7 +35,7 @@ The data for this assignment is provided in the github repo under `data/`. You d
 
 ##  1. Differentiable Volume Rendering
 
-In the emission-absorption (EA) model described in class, volumes are typically described by their *appearance* (e.g. emission) and *geometry* (absorption) at *every point* in 3D space. For part 1 of the assignment, you will implement a ***Differentiable Renderer*** for EA volumes, which you will use in parts 2 and 3. Differentiable renderers are extremely useful for 3D learning problems --- one reason is because they allow you to optimize scene parameters (i.e. perform inverse rendering) from image supervision only!
+In the emission-absorption (EA) model that we covered in class, volumes are described by their *appearance* (e.g. emission) and *geometry* (absorption) at *every point* in 3D space. For part 1 of the assignment, you will implement a ***Differentiable Renderer*** for EA volumes, which you will use in parts 2 and 3. Differentiable renderers are extremely useful for 3D learning problems --- one reason is because they allow you to optimize scene parameters (i.e. perform inverse rendering) from image supervision only!
 
 ##  1.1. Familiarize yourself with the code structure
 
@@ -50,7 +50,7 @@ There are four major components of our differentiable volume rendering pipeline:
 
 The scene, sampler, and renderer are all packaged together under the `Model` class in `main.py`. In particular the `Model`'s forward method invokes a `VolumeRenderer` instance with a sampling strategy and volume as input.
 
-Also, take a look at the `RayBundle` class in `ray_utils.py`, which provides a convenient wrapper around several inputs to the volume rendering procedure per ray.
+Also, take a look at the `RayBundle` class in `ray_utils.py`, which provides a convenient wrapper around several per-ray inputs to the volume rendering procedure.
 
 ##  1.2. Outline of tasks
 
@@ -112,7 +112,6 @@ Once you have done this, use the `render_points` method in `render_functions.py`
 
 Finally, we can implement volume rendering! With the `configs/box.yaml` configuration, we provide you with an `SDFVolume` instance describing a box. You can check out the code for this function in `implicit.py`, which converts a signed distance function into a volume. If you want, you can even implement your own `SDFVolume` classes by creating new signed distance function class, and adding it to `sdf_dict` in `implicit.py`. Take a look at [this great web page](https://www.iquilezles.org/www/articles/distfunctions/distfunctions.htm) for formulas for some simple/complex SDFs.
 
-
 ### Implementation
 
 You will implement
@@ -121,7 +120,7 @@ You will implement
 2. `VolumeRenderer._aggregate`.
 3. You will also modify the `VolumeRenderer.forward` method to render a depth map in addition to color from a volume
 
-From each volume evaluation you will get both volume density, and a color:
+From each volume evaluation you will get both volume density, and a color (`feature`):
 
 ```python
 # Call implicit function with sample points
@@ -132,11 +131,11 @@ feature = implicit_output['feature']
 
 You'll then use the following equation to render color along a ray:
 
-![Spiral Rendering of Part 1](ta_images/color.PNG)
+![Spiral Rendering of Part 1](ta_images/color.png)
 
 where `σ` is density, `Δt` is the length of current ray segment, and `L_e` is color:
 
-![Spiral Rendering of Part 1](ta_images/transmittance.PNG)
+![Spiral Rendering of Part 1](ta_images/transmittance.png)
 
 Compute the weights `T * (1 - exp(-σ * Δt))` in `VolumeRenderer._compute_weights`, and perform the summation in `VolumeRenderer._aggregate`. Note that for the first segment `T = 1`.
 
@@ -215,15 +214,15 @@ Feel free to modify the experimental settings in `configs/nerf_lego.yaml` --- th
 
 ![Spiral Rendering of Part 3](ta_images/part_3.gif)
 
-##  4. NeRF Extras (CHOOSE ONE! More than one is extra credit)
+##  4. NeRF Extras (***Choose at least one!*** More than one is extra credit)
 
 ###  4.1 View Dependence (10 pts)
 
 Add view dependence to your NeRF model! Specifically, make it so that emission can vary with viewing direction. You can NeRF or other papers for how to do this effectively --- if you're not careful, your network may overfit to the training images. Discuss the trade-offs between increased view dependence and generalization quality.
 
-###  4.2 Coarse/Fine Sampling (10 pts)
+###  4.2 Hierarchical Sampling (10 pts)
 
-NeRF employs two networks: a coarse network and a fine network. During the coarse pass, it uses the coarse network to get an estimate of geometry geometry, and during fine pass uses these geometry estimates for better point sampling for the fine network. Implement this strategy and discuss trade-offs (speed / quality).
+NeRF employs two networks: a coarse network and a fine network. During the coarse pass, it uses the coarse network to get an estimate of geometry geometry, and during fine pass uses these geometry estimates for better point sampling for the fine network. Implement this hierarchical point-sampling strategy and discuss trade-offs (speed / quality).
 
 ###  4.3 High Resolution Imagery (10 pts)
 
