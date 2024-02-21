@@ -46,7 +46,7 @@ class RayBundle(object):
             self.origins.reshape(*args, 3),
             self.directions.reshape(*args, 3),
             self.sample_points.reshape(*args, self.sample_points.shape[-2], 3),
-            self.sample_lengths.reshape(*args, self.sample_lengths.shape[-2], 1),
+            self.sample_lengths.reshape(*args, self.sample_lengths.shape[-2], 3),
         )
 
     def view(self, *args):
@@ -54,7 +54,7 @@ class RayBundle(object):
             self.origins.view(*args, 3),
             self.directions.view(*args, 3),
             self.sample_points.view(*args, self.sample_points.shape[-2], 3),
-            self.sample_lengths.view(*args, self.sample_lengths.shape[-2], 1),
+            self.sample_lengths.view(*args, self.sample_lengths.shape[-2], 3),
         )
 
     def _replace(self, **kwargs):
@@ -88,10 +88,10 @@ def sample_images_at_xy(
 def get_pixels_from_image(image_size, camera):
     W, H = image_size[0], image_size[1]
 
-    # TODO (1.3): Generate pixel coordinates from [0, W] in x and [0, H] in y
+    # TODO (Q1.3): Generate pixel coordinates from [0, W] in x and [0, H] in y
     pass
 
-    # TODO (1.3): Convert to the range [-1, 1] in both x and y
+    # TODO (Q1.3): Convert to the range [-1, 1] in both x and y
     pass
 
     # Create grid of coordinates
@@ -107,7 +107,7 @@ def get_pixels_from_image(image_size, camera):
 def get_random_pixels_from_image(n_pixels, image_size, camera):
     xy_grid = get_pixels_from_image(image_size, camera)
     
-    # TODO (2.1): Random subsampling of pixel coordinates
+    # TODO (Q2.1): Random subsampling of pixel coordinaters
     pass
 
     # Return
@@ -118,7 +118,7 @@ def get_random_pixels_from_image(n_pixels, image_size, camera):
 def get_rays_from_pixels(xy_grid, image_size, camera):
     W, H = image_size[0], image_size[1]
 
-    # TODO (1.3): Map pixels to points on the image plane at Z=1
+    # TODO (Q1.3): Map pixels to points on the image plane at Z=1
     pass
 
     ndc_points = torch.cat(
@@ -129,13 +129,13 @@ def get_rays_from_pixels(xy_grid, image_size, camera):
         dim=-1
     )
 
-    # TODO (1.3): Use camera.unproject to get world space points on the image plane from NDC space points
+    # TODO (Q1.3): Use camera.unproject to get world space points from NDC space points
     pass
 
-    # TODO (1.3): Get ray origins from camera center
+    # TODO (Q1.3): Get ray origins from camera center
     pass
 
-    # TODO (1.3): Get normalized ray directions
+    # TODO (Q1.3): Get ray directions as image_plane_points - rays_o
     pass
 
     # Create and return RayBundle

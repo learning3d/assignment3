@@ -23,7 +23,7 @@ DEFAULT_DATA_ROOT = os.path.join(
 
 DEFAULT_URL_ROOT = "https://dl.fbaipublicfiles.com/pytorch3d_nerf_data"
 
-ALL_DATASETS = ("lego", "fern", "pt3logo")
+ALL_DATASETS = ("lego", "fern", "pt3logo", "materials")
 
 
 def trivial_collate(batch):

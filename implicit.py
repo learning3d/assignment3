@@ -1,5 +1,6 @@
 import torch
 import torch.nn.functional as F
+from torch import autograd
 
 from ray_utils import RayBundle
 
@@ -19,11 +20,11 @@ class SphereSDF(torch.nn.Module):
             torch.tensor(cfg.center.val).float().unsqueeze(0), requires_grad=cfg.center.opt
         )
 
-    def forward(self, ray_bundle):
-        sample_points = ray_bundle.sample_points.view(-1, 3)
+    def forward(self, points):
+        points = points.view(-1, 3)
 
         return torch.linalg.norm(
-            sample_points - self.center,
+            points - self.center,
             dim=-1,
             keepdim=True
         ) - self.radius
@@ -44,9 +45,9 @@ class BoxSDF(torch.nn.Module):
             torch.tensor(cfg.side_lengths.val).float().unsqueeze(0), requires_grad=cfg.side_lengths.opt
         )
 
-    def forward(self, ray_bundle):
-        sample_points = ray_bundle.sample_points.view(-1, 3)
-        diff = torch.abs(sample_points - self.center) - self.side_lengths / 2.0
+    def forward(self, points):
+        points = points.view(-1, 3)
+        diff = torch.abs(points - self.center) - self.side_lengths / 2.0
 
         signed_distance = torch.linalg.norm(
             torch.maximum(diff, torch.zeros_like(diff)),
@@ -55,10 +56,37 @@ class BoxSDF(torch.nn.Module):
 
         return signed_distance.unsqueeze(-1)
 
+# Torus SDF class
+class TorusSDF(torch.nn.Module):
+    def __init__(
+        self,
+        cfg
+    ):
+        super().__init__()
+
+        self.center = torch.nn.Parameter(
+            torch.tensor(cfg.center.val).float().unsqueeze(0), requires_grad=cfg.center.opt
+        )
+        self.radii = torch.nn.Parameter(
+            torch.tensor(cfg.radii.val).float().unsqueeze(0), requires_grad=cfg.radii.opt
+        )
+
+    def forward(self, points):
+        points = points.view(-1, 3)
+        diff = points - self.center
+        q = torch.stack(
+            [
+                torch.linalg.norm(diff[..., :2], dim=-1) - self.radii[..., 0],
+                diff[..., -1],
+            ],
+            dim=-1
+        )
+        return (torch.linalg.norm(q, dim=-1) - self.radii[..., 1]).unsqueeze(-1)
 
 sdf_dict = {
     'sphere': SphereSDF,
     'box': BoxSDF,
+    'torus': TorusSDF,
 }
 
 
@@ -106,7 +134,7 @@ class SDFVolume(torch.nn.Module):
         ).view(-1, 1)
 
         # Transform SDF to density
-        signed_distance = self.sdf(ray_bundle)
+        signed_distance = self.sdf(ray_bundle.sample_points)
         density = self._sdf_to_density(signed_distance)
 
         # Outputs
@@ -126,6 +154,44 @@ class SDFVolume(torch.nn.Module):
 
         return out
 
+
+# Converts SDF into density/feature volume
+class SDFSurface(torch.nn.Module):
+    def __init__(
+        self,
+        cfg
+    ):
+        super().__init__()
+
+        self.sdf = sdf_dict[cfg.sdf.type](
+            cfg.sdf
+        )
+        self.rainbow = cfg.feature.rainbow if 'rainbow' in cfg.feature else False
+        self.feature = torch.nn.Parameter(
+            torch.ones_like(torch.tensor(cfg.feature.val).float().unsqueeze(0)), requires_grad=cfg.feature.opt
+        )
+    
+    def get_distance(self, points):
+        points = points.view(-1, 3)
+        return self.sdf(points)
+
+    def get_color(self, points):
+        points = points.view(-1, 3)
+
+        # Outputs
+        if self.rainbow:
+            base_color = torch.clamp(
+                torch.abs(points - self.sdf.center),
+                0.02,
+                0.98
+            )
+        else:
+            base_color = 1.0
+
+        return base_color * self.feature * points.new_ones(points.shape[0], 1)
+    
+    def forward(self, points):
+        return self.get_distance(points)
 
 class HarmonicEmbedding(torch.nn.Module):
     def __init__(
@@ -218,7 +284,7 @@ class MLPWithInputSkips(torch.nn.Module):
         return y
 
 
-# TODO (3.1): Implement NeRF MLP
+# TODO (Q3.1): Implement NeRF MLP
 class NeuralRadianceField(torch.nn.Module):
     def __init__(
         self,
@@ -235,7 +301,80 @@ class NeuralRadianceField(torch.nn.Module):
         pass
 
 
-volume_dict = {
+class NeuralSurface(torch.nn.Module):
+    def __init__(
+        self,
+        cfg,
+    ):
+        super().__init__()
+        # TODO (Q6): Implement Neural Surface MLP to output per-point SDF
+        # TODO (Q7): Implement Neural Surface MLP to output per-point color
+
+    def get_distance(
+        self,
+        points
+    ):
+        '''
+        TODO: Q6
+        Output:
+            distance: N X 1 Tensor, where N is number of input points
+        '''
+        points = points.view(-1, 3)
+        pass
+    
+    def get_color(
+        self,
+        points
+    ):
+        '''
+        TODO: Q7
+        Output:
+            distance: N X 3 Tensor, where N is number of input points
+        '''
+        points = points.view(-1, 3)
+        pass
+    
+    def get_distance_color(
+        self,
+        points
+    ):
+        '''
+        TODO: Q7
+        Output:
+            distance, points: N X 1, N X 3 Tensors, where N is number of input points
+        You may just implement this by independent calls to get_distance, get_color
+            but, depending on your MLP implementation, it maybe more efficient to share some computation
+        '''
+        
+    def forward(self, points):
+        return self.get_distance(points)
+
+    def get_distance_and_gradient(
+        self,
+        points
+    ):
+        has_grad = torch.is_grad_enabled()
+        points = points.view(-1, 3)
+
+        # Calculate gradient with respect to points
+        with torch.enable_grad():
+            points = points.requires_grad_(True)
+            distance = self.get_distance(points)
+            gradient = autograd.grad(
+                distance,
+                points,
+                torch.ones_like(distance, device=points.device),
+                create_graph=has_grad,
+                retain_graph=has_grad,
+                only_inputs=True
+            )[0]
+        
+        return distance, gradient
+
+
+implicit_dict = {
     'sdf_volume': SDFVolume,
     'nerf': NeuralRadianceField,
+    'sdf_surface': SDFSurface,
+    'neural_surface': NeuralSurface,
 }

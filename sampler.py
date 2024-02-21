@@ -22,10 +22,10 @@ class StratifiedRaysampler(torch.nn.Module):
         self,
         ray_bundle,
     ):
-        # TODO (1.4): Compute z values for self.n_pts_per_ray points uniformly sampled between [near, far]
+        # TODO (Q1.4): Compute z values for self.n_pts_per_ray points uniformly sampled between [near, far]
         z_vals = None
 
-        # TODO (1.4): Sample points from z values
+        # TODO (Q1.4): Sample points from z values
         sample_points = None
 
         # Return
