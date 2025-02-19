@@ -1,34 +1,47 @@
-Assignment 3
+Assignment 3 : Neural Volume Rendering and Surface Rendering
 ===================================
+Goals: In this assignment, you will setup a differentiable rendering pipeline and implement neural volume/surface rendering techniques like NeRF and VolSDF.
+
+## Table of Contents
+ - [Setup](#setup)
+ - [A. Neural Volume Rendering (80 points)](#a-neural-volume-rendering-80-points)
+    - [0. Transmittance Calculation (10)](#0-transmittance-calculation-10-points)
+    - [1. Differentiable Volume Rendering (30)](#1-differentiable-volume-rendering)
+    - [2. Optimizing a Basic Implicit Volume (10)](#2-optimizing-a-basic-implicit-volume)
+    - [3. Optimizing a Neural Radiance Field (NeRF) (20)](#3-optimizing-a-neural-radiance-field-nerf-20-points)
+    - [4. NeRF Extras (10 + 10 Extra)](#4-nerf-extras-choose-one-more-than-one-is-extra-credit)
+ - [B. Neural Surface Rendering (50 points)](#b-neural-surface-rendering-50-points)
+    - [5. Sphere Tracing (10)](#5-sphere-tracing-10-points)
+    - [6. Optimizing a Neural SDF (15)](#6-optimizing-a-neural-sdf-15-points)
+    - [7. VolSDF (15)](#7-volsdf-15-points)
+    - [8. Neural Surface Extras (10 + 20 Extra)](#8-neural-surface-extras-choose-one-more-than-one-is-extra-credit)
+
 
 
 ##  Setup
 
-### Environment setup
-You can use the python environment you've set up for past assignments, or re-install it with our `environment.yml` file:
-
+### Environment Setup
+You can use the python environment you've set up for past assignments, but if you're starting fresh, please follow the instructions from Assignment 1 to get an environment with `torch` and `pytorch3d` up and running. This assignment needs a few additional packages, that can be installed with - 
 ```bash
-conda env create -f environment.yml
-conda activate l3d
-```
-
-If you do not have Anaconda, you can quickly download it [here](https://docs.conda.io/en/latest/miniconda.html), or via the command line in with:
-
-```bash
-wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
-chmod +x Miniconda3-latest-Linux-x86_64.sh
-bash Miniconda3-latest-Linux-x86_64.sh
+pip install -r requirements.txt
 ```
 
 ### Data
 
-Most of the data for this assignment is provided in the github repo under `data/`. One of the assets (materials scene) is large, you need to download the zip file from `https://drive.google.com/file/d/1v_0w1bx6m-SMZdqu3IFO71FEsu-VJJyb/view?usp=sharing` and unzip it into `data/` directory.
+Most of the data for this assignment is provided in the github repo under `data/`. One of the assets (materials scene for Q4.1) is large, so you can download and unzip it as follows - 
+```bash
+sudo apt install git-lfs
+git lfs install
 
-# A. Neural Volume Rendering
+git clone https://huggingface.co/datasets/learning3dvision/nerf_materials
+cd nerf_materials
+unzip materials.zip -d <path_to_your_data_folder>
+```
+# A. Neural Volume Rendering (80 points)
 
 ## 0. Transmittance Calculation (10 points)
 Transmittance calculation is a core part for the implementation of volume rendering. Your first task is to compute the transmittance of a ray going through a non-homogeneous medium (shown in the image below).   
-Please compute the transmittace in `transmittance_calculation/a3_transmittance.pdf` and submit the result on your assignment website. You can either hand write the result or edit the tex file and show a screenshot on your webpage, as long as it is readable by the TAs.
+Please compute the transmittance in `transmittance_calculation/a3_transmittance.pdf` and submit the result on your assignment website. You can either hand write the result or edit the tex file and show a screenshot on your webpage, as long as it is readable by the TAs.
 
 ![Transmittance computation](transmittance_calculation/figure1.png)
 
@@ -132,11 +145,11 @@ feature = implicit_output['feature']
 
 You'll then use the following equation to render color along a ray:
 
-![Spiral Rendering of Part 1](ta_images/color.png)
++![Equation](ta_images/color.PNG)
 
 where `σ` is density, `Δt` is the length of current ray segment, and `L_e` is color:
 
-![Spiral Rendering of Part 1](ta_images/transmittance.png)
++![Transmittance](ta_images/transmittance.PNG)
 
 Compute the weights `T * (1 - exp(-σ * Δt))` in `VolumeRenderer._compute_weights`, and perform the summation in `VolumeRenderer._aggregate`. Note that for the first segment `T = 1`.
 
@@ -146,7 +159,7 @@ Use weights, and aggregation function to render *color* and *depth* (stored in `
 
 By default, your results will be written out to `images/part_1.gif`. Provide a visualization of the depth in your write-up. Note that the depth should be normalized by its maximum value.
 
-![Spiral Rendering of Part 1](ta_images/part_1.gif) ![Spiral Rendering of Part 1](ta_images/depth.png)
+![Spiral Rendering of Part 1](ta_images/part_1.gif) ![Depth](ta_images/depth.png)
 
 
 ##  2. Optimizing a basic implicit volume
@@ -186,7 +199,7 @@ The code renders a spiral sequence of the optimized volume in `images/part_2.gif
 
 
 ##  3. Optimizing a Neural Radiance Field (NeRF) (20 points)
-In this part, you will implement an implicit volume as a Multi-Layer Perceptron (MLP) in the `NeuraRadianceField` class in `implicit.py`. This MLP should map 3D position to volume density and color. Specifically:
+In this part, you will implement an implicit volume as a Multi-Layer Perceptron (MLP) in the `NeuralRadianceField` class in `implicit.py`. This MLP should map 3D position to volume density and color. Specifically:
 
 1. Your MLP should take in a `RayBundle` object in its forward method, and produce color and density for each sample point in the RayBundle.
 2. You should also fill out the loss in `train_nerf` in the `volume_rendering_main.py` file.
@@ -217,21 +230,23 @@ Feel free to modify the experimental settings in `configs/nerf_lego.yaml` --- th
 
 ##  4. NeRF Extras (CHOOSE ONE! More than one is extra credit)
 
-###  4.1 View Dependence (10 pts)
+###  4.1 View Dependence (10 points)
 
 Add view dependence to your NeRF model! Specifically, make it so that emission can vary with viewing direction. You can read NeRF or other papers for how to do this effectively --- if you're not careful, your network may overfit to the training images. Discuss the trade-offs between increased view dependence and generalization quality. 
 
 While you may use the lego scene to test your code, please employ the materials scene to show the results of your method on your webpage (experimental settings can be found in `nerf_materials.yaml` and `nerf_materials_highres.yaml`).
 
-###  4.2 Coarse/Fine Sampling (10 pts)
+If you haven't done so already, make sure to download and unzip the `nerf_materials` dataset as described in the setup section.
+
+###  4.2 Coarse/Fine Sampling (10 points)
 
 NeRF employs two networks: a coarse network and a fine network. During the coarse pass, it uses the coarse network to get an estimate of geometry, and during fine pass uses these geometry estimates for better point sampling for the fine network. Implement this strategy and discuss trade-offs (speed / quality).
 
-# B. Neural Surface Rendering
+# B. Neural Surface Rendering (50 points)
 
-##  5. Sphere Tracing (10pts)
+##  5. Sphere Tracing (10 points)
 
-In this part you will implement sphere tracing for rendering an SDF, and use this implementation to render a simple torus. You will need to implement the `sphere_tracing` function in `renderer.py`. This function should return two outpus: (`points, mask`), where the `points` Tensor indicates the intersection point for each ray with the surface, and `masks` is a boolean Tensor indicating which rays intersected the surface.
+In this part you will implement sphere tracing for rendering an SDF, and use this implementation to render a simple torus. You will need to implement the `sphere_tracing` function in `renderer.py`. This function should return two outputs: (`points, mask`), where the `points` Tensor indicates the intersection point for each ray with the surface, and `mask` is a boolean Tensor indicating which rays intersected the surface.
 
 You can run the code for part 5 with:
 ```bash
@@ -243,7 +258,7 @@ This should save `part_5.gif` in the `images' folder. Please include this in you
 
 ![Torus](ta_images/part_5.gif)
 
-##  6. Optimizing a Neural SDF (15pts)
+##  6. Optimizing a Neural SDF (15 points)
 
 In this part, you will implement an MLP architecture for a neural SDF, and train this neural SDF on point cloud data. You will do this by training the network to output a zero value at the observed points. To encourage the network to learn an SDF instead of an arbitrary function, we will use an 'eikonal' regularization which enforces the gradients of the predictions to behave in a certain way (search lecture slides for hints).
 
@@ -262,7 +277,7 @@ This should save save `part_6_input.gif` and `part_6.gif` in the `images` folder
 
 ![Bunny geometry](ta_images/part_6.gif)
 
-##  7. VolSDF (15 pts)
+##  7. VolSDF (15 points)
 
 In this part, you will implement a function converting SDF -> volume density and extend the `NeuralSurface` class to predict color. 
 
@@ -286,11 +301,11 @@ This will save `part_7_geometry.gif` and `part_7.gif`. Experiment with hyper-par
 
 ## 8. Neural Surface Extras (CHOOSE ONE! More than one is extra credit)
 
-### 8.1. Render a Large Scene with Sphere Tracing (10 pts)
+### 8.1. Render a Large Scene with Sphere Tracing (10 points)
 In Q5, you rendered a (lonely) Torus, but to the power of Sphere Tracing lies in the fact that it can render complex scenes efficiently. To observe this, try defining a ‘scene’ with many (> 20) primitives (e.g. Sphere, Torus, or another SDF from [this website](https://iquilezles.org/articles/distfunctions/) at different locations). See Lecture 2 for equations of what the ‘composed’ SDF of primitives is. You can then define a new class in `implicit.py` that instantiates a complex scene with many primitives, and modify the code for Q5 to render this scene instead of a simple torus.
 
-### 8.2 Fewer Training Views (10 pts)
-In Q7, we relied on 100 training views for a single scene. A benefit of using Surface representations, however, is that the geometry is better regularized and can in principle be inferred from fewer views. Experiment with using fewer training views (say 20) -- you can do this by changing [train_idx in data laoder](https://github.com/learning3d/assignment3/blob/main/dataset.py#L123) to use a smaller random subset of indices. You should also compare the VolSDF solution to a NeRF solution learned using similar views.
+### 8.2 Fewer Training Views (10 points)
+In Q7, we relied on 100 training views for a single scene. A benefit of using Surface representations, however, is that the geometry is better regularized and can in principle be inferred from fewer views. Experiment with using fewer training views (say 20) -- you can do this by changing [train_idx in data loader](https://github.com/learning3d/assignment3/blob/main/dataset.py#L123) to use a smaller random subset of indices. You should also compare the VolSDF solution to a NeRF solution learned using similar views.
 
-### 8.3 Alternate SDF to Density Conversions (10 pts)
+### 8.3 Alternate SDF to Density Conversions (10 points)
 In Q7, we used the equations from [VolSDF Paper](https://arxiv.org/pdf/2106.12052.pdf) to convert SDF to density. You should try and compare alternate ways of doing this e.g. the ‘naive’ solution from the [NeuS paper](https://arxiv.org/pdf/2106.10689.pdf), or any other ways that you might want to propose!

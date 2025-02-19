@@ -148,7 +148,7 @@ def render(
     all_images = render_images(
         model, cameras, cfg.data.image_size
     )
-    imageio.mimsave('images/part_1.gif', [np.uint8(im * 255) for im in all_images])
+    imageio.mimsave('images/part_1.gif', [np.uint8(im * 255) for im in all_images], loop=0)
 
 
 def train(
@@ -223,7 +223,7 @@ def train(
     all_images = render_images(
         model, create_surround_cameras(3.0, n_poses=20), image_size, file_prefix='part_2'
     )
-    imageio.mimsave('images/part_2.gif', [np.uint8(im * 255) for im in all_images])
+    imageio.mimsave('images/part_2.gif', [np.uint8(im * 255) for im in all_images], loop=0)
 
 
 def create_model(cfg):
@@ -359,7 +359,7 @@ def train_nerf(
                     model, create_surround_cameras(4.0, n_poses=20, up=(0.0, 0.0, 1.0), focal_length=2.0),
                     cfg.data.image_size, file_prefix='nerf'
                 )
-                imageio.mimsave('images/part_3.gif', [np.uint8(im * 255) for im in test_images])
+                imageio.mimsave('images/part_3.gif', [np.uint8(im * 255) for im in test_images], loop=0)
 
 
 @hydra.main(config_path='./configs', config_name='sphere')

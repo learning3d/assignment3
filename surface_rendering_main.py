@@ -147,7 +147,7 @@ def render(
     all_images = render_images(
         model, cameras, cfg.data.image_size
     )
-    imageio.mimsave('images/part_5.gif', [np.uint8(im * 255) for im in all_images])
+    imageio.mimsave('images/part_5.gif', [np.uint8(im * 255) for im in all_images],loop=0)
 
 
 def create_model(cfg):
@@ -221,7 +221,7 @@ def train_points(
         all_points.unsqueeze(0), create_surround_cameras(3.0, n_poses=20, up=(0.0, 1.0, 0.0), focal_length=2.0),
         cfg.data.image_size, file_prefix='points'
     )
-    imageio.mimsave('images/part_6_input.gif', [np.uint8(im * 255) for im in point_images])
+    imageio.mimsave('images/part_6_input.gif', [np.uint8(im * 255) for im in point_images], loop=0)
 
     # Run the main training loop.
     for epoch in range(0, cfg.training.num_epochs):
@@ -280,7 +280,7 @@ def train_points(
                     model, create_surround_cameras(3.0, n_poses=20, up=(0.0, 1.0, 0.0), focal_length=2.0),
                     cfg.data.image_size, file_prefix='eikonal', thresh=0.002,
                 )
-                imageio.mimsave('images/part_6.gif', [np.uint8(im * 255) for im in test_images])
+                imageio.mimsave('images/part_6.gif', [np.uint8(im * 255) for im in test_images], loop=0)
             except Exception as e:
                 print("Empty mesh")
                 pass
@@ -405,14 +405,14 @@ def train_images(
                 model, create_surround_cameras(4.0, n_poses=20, up=(0.0, 0.0, 1.0), focal_length=2.0),
                 cfg.data.image_size, file_prefix='volsdf'
             )
-            imageio.mimsave('images/part_7.gif', [np.uint8(im * 255) for im in test_images])
+            imageio.mimsave('images/part_7.gif', [np.uint8(im * 255) for im in test_images], loop=0)
 
             try:
                 test_images = render_geometry(
                     model, create_surround_cameras(4.0, n_poses=20, up=(0.0, 0.0, 1.0), focal_length=2.0),
                     cfg.data.image_size, file_prefix='volsdf_geometry'
                 )
-                imageio.mimsave('images/part_7_geometry.gif', [np.uint8(im * 255) for im in test_images])
+                imageio.mimsave('images/part_7_geometry.gif', [np.uint8(im * 255) for im in test_images], loop=0)
             except Exception as e:
                 print("Empty mesh")
                 pass
