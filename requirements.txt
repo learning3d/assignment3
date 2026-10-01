@@ -1,11 +1,10 @@
-torchvision
 hydra-core
 Pillow
-plotly
 requests
 imageio
 matplotlib
 numpy<2.0.0
 PyMCubes
 tqdm
-visdom
+plyfile
+scikit-image
